@@ -39,7 +39,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				if(distance <= chaseRange){
 					currentState = State.Chasing;
 				}
-				Breathe();
 				break;
 			case State.Chasing:
 				//Chasing
@@ -57,7 +56,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				} else if (distance > chaseRange){
 					currentState = State.Idle;
 				}
-				Breathe();
 				break;
 			case State.Dead:
 				break;
@@ -70,22 +68,20 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				if(distance > attackRange){
 					currentState = State.Chasing;
 				}
-				Breathe();
 				break;
 			}
 		}
-		void Breathe(){
+
+		public void LoseHealth (float damage)
+		{
+			Debug.Log ("lost health");
+			currentHealth -= damage;
 			if (currentHealth <= 0.0f) {
 				currentState = State.Dead;
 				anim.clip = die;
 				anim.wrapMode = WrapMode.Once;
 				anim.Play ();
 			}
-		}
-
-		public void LoseHealth (float damage)
-		{
-			currentHealth -= damage;
 		}
 		public void Die(){
 			//Destroy (this.gameObject);

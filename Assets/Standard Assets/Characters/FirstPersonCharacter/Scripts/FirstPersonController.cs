@@ -83,6 +83,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			if (!m_Jump) {
 				m_Jump = CrossPlatformInputManager.GetButtonDown ("Jump");
 			}
+			if (Input.GetKey (KeyCode.G)) {
+				Debug.Log(anim.name);
+				anim.Play();
+				Debug.Log(anim.isPlaying);
+			}
 
 			if (!m_PreviouslyGrounded && m_CharacterController.isGrounded) {
 				StartCoroutine (m_JumpBob.DoBobCycle ());
