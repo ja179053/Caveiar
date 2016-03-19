@@ -96,6 +96,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 			// Attack
 			if (Input.GetMouseButtonDown (0) && attackCDleft <= 0.0f) {
+				Debug.Log("attacking");
 				anim.Play ();
 				if (getNearestEnemy () != null) {
 					if (Vector3.Distance (transform.position, getNearestEnemy ().transform.position) <= attackRange) {
