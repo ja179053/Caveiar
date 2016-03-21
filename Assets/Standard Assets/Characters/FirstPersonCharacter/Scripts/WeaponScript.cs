@@ -7,6 +7,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 	{
 		public float damage = 1;
 		public GameObject weapon;
+		public Collider collider;
 		FirstPersonController player;
 		void Start(){
 			player = FindObjectOfType<FirstPersonController> ();
@@ -17,6 +18,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				Debug.Log ("close enough");
 				weapon.SetActive (true);
 				player.damage = damage;
+				if (collider != null){
+					collider.enabled = !collider.enabled;
+				}
 				Destroy (gameObject);
 			}
 		}

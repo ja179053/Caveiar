@@ -18,6 +18,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			Dead
 		}
 		public State currentState;
+		bool seen;
 
 		// Use this for initialization
 		void Start ()
@@ -42,6 +43,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				break;
 			case State.Chasing:
 				//Chasing
+				seen = true;
 				transform.LookAt (player.transform.position);
 				//	anim.SetFloat ("speed", 1.0f);
 
@@ -54,7 +56,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				if(distance <= attackRange){
 					currentState = State.Attacking;
 				} else if (distance > chaseRange){
+					if(!seen){
 					currentState = State.Idle;
+					}
 				}
 				break;
 			case State.Dead:
