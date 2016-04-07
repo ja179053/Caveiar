@@ -10,28 +10,63 @@ namespace UnityStandardAssets.Characters.FirstPerson
 	[RequireComponent (typeof(AudioSource))]
 	public class FirstPersonController : MonoBehaviour
 	{
-		[SerializeField] private bool m_IsWalking;
-		[SerializeField] private float m_WalkSpeed;
-		[SerializeField] private float m_RunSpeed;
-		[SerializeField] [Range (0f, 1f)] private float m_RunstepLenghten;
-		[SerializeField] private float m_JumpSpeed;
-		[SerializeField] private float m_StickToGroundForce;
-		[SerializeField] private float m_GravityMultiplier;
-		[SerializeField] private MouseLook m_MouseLook;
-		[SerializeField] private bool m_UseFovKick;
-		[SerializeField] private FOVKick m_FovKick = new FOVKick ();
-		[SerializeField] private bool m_UseHeadBob;
-		[SerializeField] private CurveControlledBob m_HeadBob = new CurveControlledBob ();
-		[SerializeField] private LerpControlledBob m_JumpBob = new LerpControlledBob ();
-		[SerializeField] private float m_StepInterval;
-		[SerializeField] private AudioClip[] m_FootstepSounds;
+		[SerializeField]
+		private bool
+			m_IsWalking;
+		[SerializeField]
+		private float
+			m_WalkSpeed;
+		[SerializeField]
+		private float
+			m_RunSpeed;
+		[SerializeField]
+		[Range (0f, 1f)]
+		private float
+			m_RunstepLenghten;
+		[SerializeField]
+		private float
+			m_JumpSpeed;
+		[SerializeField]
+		private float
+			m_StickToGroundForce;
+		[SerializeField]
+		private float
+			m_GravityMultiplier;
+		[SerializeField]
+		private MouseLook
+			m_MouseLook;
+		[SerializeField]
+		private bool
+			m_UseFovKick;
+		[SerializeField]
+		private FOVKick
+			m_FovKick = new FOVKick ();
+		[SerializeField]
+		private bool
+			m_UseHeadBob;
+		[SerializeField]
+		private CurveControlledBob
+			m_HeadBob = new CurveControlledBob ();
+		[SerializeField]
+		private LerpControlledBob
+			m_JumpBob = new LerpControlledBob ();
+		[SerializeField]
+		private float
+			m_StepInterval;
+		[SerializeField]
+		private AudioClip[]
+			m_FootstepSounds;
 		// an array of footstep sounds that will be randomly selected from.
-		[SerializeField] private AudioClip m_JumpSound;
+		[SerializeField]
+		private AudioClip
+			m_JumpSound;
 		// the sound played when character leaves the ground.
-		[SerializeField] public float attackRange = 1.5f;
-
-
-		[SerializeField] private AudioClip m_LandSound;
+		[SerializeField]
+		public float
+			attackRange = 1.5f;
+		[SerializeField]
+		private AudioClip
+			m_LandSound;
 		public bool canMove;
 		private Camera m_Camera;
 		private bool m_Jump;
@@ -48,15 +83,27 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		private AudioSource m_AudioSource;
 		public float attackCD = 3.0f;
 		Animation anim;
-
 		public float attackCDleft = 0.0f;
-
 		float health;
 		public float maxHealth = 10, damage = 1;
 		public GameObject weapon;
+		bool inSlowMotion;
 
+		public bool slowMo {
+			get {
+				return inSlowMotion;
+			}
+			set {
+				if (value == true) {
+					Time.timeScale = 0.2f;
+				} else {
+					Time.timeScale = 1f;
+				}
+				inSlowMotion = value;
+				return;
+			}
+		}
 
-		// Use this for initialization
 		private void Start ()
 		{
 			m_CharacterController = GetComponent<CharacterController> ();
@@ -74,8 +121,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			health = maxHealth;
 		}
 
-
-		// Update is called once per frame
 		private void Update ()
 		{
 			RotateView ();
@@ -97,11 +142,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 				// Attack
 				if (Input.GetMouseButtonDown (0) && attackCDleft <= 0.0f) {
-					Debug.Log ("attacking");
 					anim.Play ();
 					if (getNearestEnemy () != null) {
 						if (Vector3.Distance (transform.position, getNearestEnemy ().transform.position) <= attackRange) {
-							getNearestEnemy ().GetComponent<Enemy> ().LoseHealth (damage);
+							getNearestEnemy ().LoseHealth (damage);
 							attackCDleft = attackCD;
 						}
 					}
@@ -113,14 +157,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			}
 		}
 
-
 		private void PlayLandingSound ()
 		{
 			m_AudioSource.clip = m_LandSound;
 			m_AudioSource.Play ();
 			m_NextStep = m_StepCycle + .5f;
 		}
-
 
 		private void FixedUpdate ()
 		{
@@ -161,19 +203,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			}
 		}
 
-
 		private void PlayJumpSound ()
 		{
 			m_AudioSource.clip = m_JumpSound;
 			m_AudioSource.Play ();
 		}
 
-
 		private void ProgressStepCycle (float speed)
 		{
 			if (m_CharacterController.velocity.sqrMagnitude > 0 && (m_Input.x != 0 || m_Input.y != 0)) {
 				m_StepCycle += (m_CharacterController.velocity.magnitude + (speed * (m_IsWalking ? 1f : m_RunstepLenghten))) *
-				Time.fixedDeltaTime;
+					Time.fixedDeltaTime;
 			}
 
 			if (!(m_StepCycle > m_NextStep)) {
@@ -184,7 +224,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 			PlayFootStepAudio ();
 		}
-
 
 		private void PlayFootStepAudio ()
 		{
@@ -201,7 +240,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			m_FootstepSounds [0] = m_AudioSource.clip;
 		}
 
-
 		private void UpdateCameraPosition (float speed)
 		{
 			Vector3 newCameraPosition;
@@ -211,7 +249,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			if (m_CharacterController.velocity.magnitude > 0 && m_CharacterController.isGrounded) {
 				m_Camera.transform.localPosition =
                     m_HeadBob.DoHeadBob (m_CharacterController.velocity.magnitude +
-				(speed * (m_IsWalking ? 1f : m_RunstepLenghten)));
+					(speed * (m_IsWalking ? 1f : m_RunstepLenghten)));
 				newCameraPosition = m_Camera.transform.localPosition;
 				newCameraPosition.y = m_Camera.transform.localPosition.y - m_JumpBob.Offset ();
 			} else {
@@ -220,7 +258,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			}
 			m_Camera.transform.localPosition = newCameraPosition;
 		}
-
 
 		private void GetInput (out float speed)
 		{
@@ -252,12 +289,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			}
 		}
 
-
 		private void RotateView ()
 		{
 			m_MouseLook.LookRotation (transform, m_Camera.transform);
 		}
-
 
 		private void OnControllerColliderHit (ControllerColliderHit hit)
 		{
@@ -273,13 +308,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			body.AddForceAtPosition (m_CharacterController.velocity * 0.1f, hit.point, ForceMode.Impulse);			
 		}
 
-		GameObject getNearestEnemy ()
+		Enemy getNearestEnemy ()
 		{
-			GameObject nearest = null;
-			foreach (GameObject Enemy in GameObject.FindGameObjectsWithTag("Enemy")) {
-				if (nearest == null || Vector3.Distance (transform.position, Enemy.transform.position) < Vector3.Distance (transform.position, nearest.transform.position)) {
-					nearest = Enemy;
-
+			Enemy nearest = null;
+			Enemy[] enemies = FindObjectsOfType<Enemy> ();
+			foreach (Enemy enemy in enemies) {
+				if (nearest == null || Vector3.Distance (transform.position, enemy.transform.position) < Vector3.Distance (transform.position, nearest.transform.position)) {
+					nearest = enemy;
 				}
 			}
 			return nearest;
@@ -289,6 +324,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		{
 			//	health = health - 1;
 			health--;
+			if (health < 0) {
+				Application.LoadLevel (2);
+			}
 		}
 	}
 }		

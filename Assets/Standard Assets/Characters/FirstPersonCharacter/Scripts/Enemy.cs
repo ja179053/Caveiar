@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
-	public class Enemy : MonoBehaviour
+	public class Enemy : Quests
 	{
 
 		public float maxHealth = 10.0f, currentHealth, chaseRange = 5.0f, attackRange = 1.5f, attackCD = 3.0f, distance, speed = 1;
@@ -17,7 +17,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			Chasing,
 			Dead
 		}
+		public enum Nature{
+			Fierce,
+			Timid,
+			Peaceful
+		}
 		public State currentState;
+		public Nature nature;
 		bool seen;
 
 		// Use this for initialization
@@ -38,7 +44,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				anim.clip = idle;
 				anim.Play ();
 				if(distance <= chaseRange){
+				   if(nature == Nature.Fierce){
 					currentState = State.Chasing;
+					} else if (nature == Nature.Peaceful) {
+					}
 				}
 				break;
 			case State.Chasing:
@@ -64,8 +73,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			case State.Dead:
 				break;
 			case State.Attacking:
-
-				Attack ();
 				attackCDLeft = attackCD;
 				anim.clip = attacking;
 				anim.Play ();
@@ -83,8 +90,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			if (currentHealth <= 0.0f) {
 				currentState = State.Dead;
 				anim.clip = die;
-				anim.wrapMode = WrapMode.Once;
 				anim.Play ();
+				SwitchCollider();
 			}
 		}
 		public void Die(){
@@ -93,10 +100,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 		public void Attack ()
 		{
-			if (attackCDLeft <= 0.0f) {
+		//	if (attackCDLeft <= 0.0f) {
 				player.LoseHealth (2f);
 				Debug.Log ("The player lost 2 health");
-			}
+		//	}
 		}
 	}
 }
